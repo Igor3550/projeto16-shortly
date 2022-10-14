@@ -5,5 +5,6 @@ import { signInMiddleware, signUpMiddleware } from '../middlewares/authMiddlewar
 const router = express.Router()
 
 router.post('/signup', signUpMiddleware, signUp);
+router.post('/signin', signInMiddleware, signIn);
 
 export default router;
