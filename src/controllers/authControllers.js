@@ -18,7 +18,7 @@ async function signIn (req, res) {
   const body = req.body
   const user = res.locals.user
   try {
-    if(!bcrypt.compareSync(body.password, user.password)) return res.status(422).send("Usuário e/ou senha invalido(s)!");
+    if(!bcrypt.compareSync(body.password, user.password)) return res.status(401).send("Usuário e/ou senha invalido(s)!");
     
     const token = nanoid()
     await db.query('INSERT INTO sections (user_id, token) VALUES ($1, $2);', [user.id, token])
