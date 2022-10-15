@@ -47,8 +47,21 @@ async function openShortUrl (req, res) {
   }
 }
 
+async function deleteShort (req, res) {
+  const shortInfo = res.locals.shortInfo
+  try {
+    await db.query('DELETE FROM short_visits WHERE short_id = $1;', [shortInfo.id])
+    await db.query('DELETE FROM shorts WHERE id = $1;', [shortInfo.id])
+    return res.sendStatus(204)
+  } catch (error) {
+    console.log(error)
+    return res.sendStatus(500)
+  }
+}
+
 export {
   createShort,
   getShortById,
-  openShortUrl
+  openShortUrl,
+  deleteShort
 }
