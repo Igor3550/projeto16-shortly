@@ -15,6 +15,26 @@ async function createShort (req, res) {
   }
 }
 
+async function getShortById (req, res) {
+  const shortId = req.params.id
+  try {
+    const resp = await db.query('SELECT * FROM shorts WHERE id = $1', [shortId])
+    if(!resp.rows[0]) return res.sendStatus(404)
+
+    const returnBody = {
+      id: resp.rows[0].id,
+      shortUrl: resp.rows[0].short_url,
+      url: resp.rows[0].original_url
+    }
+    
+    return res.send(returnBody)
+  } catch (error) {
+    console.log(error)
+    return res.sendStatus(500)
+  }
+}
+
 export {
-  createShort
+  createShort,
+  getShortById
 }
