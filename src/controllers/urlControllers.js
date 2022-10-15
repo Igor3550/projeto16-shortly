@@ -18,7 +18,7 @@ async function createShort (req, res) {
 async function getShortById (req, res) {
   const shortId = req.params.id
   try {
-    const resp = await db.query('SELECT * FROM shorts WHERE id = $1', [shortId])
+    const resp = await db.query('SELECT * FROM shorts WHERE id = $1;', [shortId])
     if(!resp.rows[0]) return res.sendStatus(404)
 
     const returnBody = {
@@ -26,8 +26,21 @@ async function getShortById (req, res) {
       shortUrl: resp.rows[0].short_url,
       url: resp.rows[0].original_url
     }
-    
+
     return res.send(returnBody)
+  } catch (error) {
+    console.log(error)
+    return res.sendStatus(500)
+  }
+}
+
+async function openShortUrl (req, res) {
+  const shortUrl = req.params.shortUrl
+  try {
+    const shortData = await (await db.query("SELECT * FROM shorts WHERE short_url = $1;", [shortUrl])).rows[0]
+    if(!shortData) return res.sendStatus(404);
+    await db.query("INSERT INTO short_visits (short_id) VALUES ($1)", [shortData.id])
+    return res.redirect(shortData.original_url)
   } catch (error) {
     console.log(error)
     return res.sendStatus(500)
@@ -36,5 +49,6 @@ async function getShortById (req, res) {
 
 export {
   createShort,
-  getShortById
+  getShortById,
+  openShortUrl
 }
