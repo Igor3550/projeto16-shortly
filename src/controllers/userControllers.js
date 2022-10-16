@@ -2,6 +2,7 @@ import db from '../database.js';
 
 async function getUserInfo (req, res) {
   const user = res.locals.user;
+  if(!user) return res.sendStatus(404)
   try {
     const totalUserVisits = await db.query(`
       SELECT 
